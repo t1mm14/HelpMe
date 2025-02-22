@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>Новый отклик на ваше объявление</h2>
+    <p>На ваше объявление "{{ advertisement.title }}" поступил новый отклик от {{ response.author }}:</p>
+    <p>{{ response.text }}</p>
+    <a href="http://ваш-домен.com{% url 'response_list' %}">Просмотреть все отклики</a>
+</body>
+</html> 

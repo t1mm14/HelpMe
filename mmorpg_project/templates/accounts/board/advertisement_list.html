@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Список объявлений{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- Сайдбар с категориями -->
+        <div class="col-md-3">
+            <h4>Категории</h4>
+            <div class="list-group mb-4">
+                <a href="{% url 'advertisement_list' %}" 
+                   class="list-group-item list-group-item-action {% if not request.GET.category %}active{% endif %}">
+                    Все категории
+                </a>
+                {% for category in categories %}
+                    <a href="?category={{ category.name }}" 
+                       class="list-group-item list-group-item-action {% if request.GET.category == category.name %}active{% endif %}">
+                        {{ category.name }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Список объявлений -->
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Объявления</h1>
+                <a href="{% url 'advertisement_create' %}" class="btn btn-primary">Создать объявление</a>
+            </div>
+            
+            {% if advertisements %}
+                <div class="row">
+                    {% for advertisement in advertisements %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                {% if advertisement.image %}
+                                    <img src="{{ advertisement.image.url }}" class="card-img-top" alt="{{ advertisement.title }}">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ advertisement.title }}</h5>
+                                    <p class="card-text">{{ advertisement.content|truncatewords:30 }}</p>
+                                    <p class="card-text">
+                                        <small class="text-muted">
+                                            Категория: {{ advertisement.category.name }}<br>
+                                            Автор: {{ advertisement.author.username }}<br>
+                                            Дата: {{ advertisement.created_at|date:"d.m.Y" }}
+                                        </small>
+                                    </p>
+                                    <a href="{% url 'advertisement_detail' advertisement.pk %}" class="btn btn-primary">Подробнее</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>Нет доступных объявлений.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

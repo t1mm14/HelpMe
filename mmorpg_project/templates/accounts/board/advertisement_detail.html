@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-body">
+        <h2 class="card-title">{{ advertisement.title }}</h2>
+        <p class="text-muted">
+            Категория: {{ advertisement.category }}
+            | Автор: {{ advertisement.author }}
+            | Создано: {{ advertisement.created_at|date:"d.m.Y" }}
+        </p>
+        <div class="card-text">
+            {{ advertisement.content|safe }}
+        </div>
+    </div>
+</div>
+
+{% if user.is_authenticated and user != advertisement.author %}
+    {% if not user_response %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4>Оставить отклик</h4>
+                <form method="post" action="{% url 'response_create' pk=advertisement.pk %}">
+                    {% csrf_token %}
+                    {{ response_form.as_p }}
+                    <button type="submit" class="btn btn-primary">Отправить</button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Вы уже оставили отклик на это объявление.
+        </div>
+    {% endif %}
+{% endif %}
+{% endblock %} 

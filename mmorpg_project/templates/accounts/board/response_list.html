@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Список откликов{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Отклики на ваши объявления</h1>
+    
+    <div class="mb-3">
+        <form method="get" class="form-inline">
+            <select name="advertisement" class="form-control" onchange="this.form.submit()">
+                <option value="">Все объявления</option>
+                {% for ad in advertisements %}
+                    <option value="{{ ad.id }}" {% if request.GET.advertisement == ad.id|stringformat:"s" %}selected{% endif %}>
+                        {{ ad.title }}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    {% if responses %}
+        <div class="list-group">
+            {% for response in responses %}
+                <div class="list-group-item">
+                    <h5>Отклик на: {{ response.advertisement.title }}</h5>
+                    <p>{{ response.content }}</p>
+                    <p class="text-muted">
+                        От: {{ response.author.username }} | 
+                        Дата: {{ response.created_at|date:"d.m.Y H:i" }}
+                    </p>
+                    {% if not response.is_accepted %}
+                        <form method="post" action="{% url 'response_accept' response.pk %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success btn-sm">Принять</button>
+                        </form>
+                    {% else %}
+                        <span class="badge bg-success">Принято</span>
+                    {% endif %}
+                    <form method="post" action="{% url 'response_delete' response.pk %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Нет откликов на ваши объявления.</p>
+    {% endif %}
+</div>
+{% endblock %} 
